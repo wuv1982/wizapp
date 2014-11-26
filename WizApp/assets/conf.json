@@ -1,0 +1,11 @@
+{
+	sideMenu : [{
+		title : "menu1",
+		click : "web://?url=http://www.google.co.jp",
+		dClick : ""
+	}, {
+		title : "menu2"
+		click : "",
+		dClick : ""
+	}]
+}
