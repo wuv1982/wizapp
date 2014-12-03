@@ -8,7 +8,7 @@ import com.wb.wizapp.ui.BaseActivity;
 
 public abstract class UISyncTask<PR, PG, RS> extends AsyncTask<PR, PG, RS> {
 
-	private final WeakReference<BaseActivity> wkAct;
+	protected final WeakReference<BaseActivity> wkAct;
 
 	public UISyncTask(BaseActivity act) {
 		this.wkAct = new WeakReference<BaseActivity>(act);
@@ -32,5 +32,4 @@ public abstract class UISyncTask<PR, PG, RS> extends AsyncTask<PR, PG, RS> {
 			act.HideProgress();
 		}
 	}
-
 }

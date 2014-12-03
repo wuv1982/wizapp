@@ -3,15 +3,17 @@ package com.wb.wizapp.rest;
 import org.apache.http.Header;
 import org.json.JSONObject;
 
+import android.app.Activity;
+
 public class RestAPISercieBuilderAdapter<T extends JsonParsable> implements IRestAPIServiceBuilder<T> {
 
 	@Override
-	public T appendBody() {
+	public T getBody() {
 		return null;
 	}
 
 	@Override
-	public Header[] appendHeaders() {
+	public Header[] getHeaders() {
 		return null;
 	}
 
@@ -21,7 +23,17 @@ public class RestAPISercieBuilderAdapter<T extends JsonParsable> implements IRes
 	}
 
 	@Override
-	public void onFailed(int statusCode, String body) {
+	public void onFailed(int statusCode, JSONObject body) {
+
+	}
+
+	@Override
+	public void onExcpetion(Exception e) {
+
+	}
+
+	@Override
+	public void onPostResult(Activity act, JSONObject result) {
 
 	}
 

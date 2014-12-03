@@ -1,5 +1,6 @@
 package com.wb.wizapp.rest;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -8,24 +9,30 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 
 import com.wb.wizapp.Constants;
 
-public abstract class RestAPIService implements ResponseHandler<JSONObject> {
+public class RestAPIService implements ResponseHandler<JSONObject> {
 
 	public enum RestMethod {
 		GET, PUT, POST, DELETE,
@@ -145,7 +152,7 @@ public abstract class RestAPIService implements ResponseHandler<JSONObject> {
 
 		// add customized headers
 		if (builder != null) {
-			Header[] headers = builder.appendHeaders();
+			Header[] headers = builder.getHeaders();
 			if (headers != null) {
 				for (Header h : headers) {
 					request.addHeader(h);
@@ -159,7 +166,7 @@ public abstract class RestAPIService implements ResponseHandler<JSONObject> {
 
 	private void setBody(HttpEntityEnclosingRequest request) {
 		if (builder != null) {
-			JsonParsable jsonBody = builder.appendBody();
+			JsonParsable jsonBody = builder.getBody();
 			if (jsonBody != null) {
 				try {
 					String jsonStr = jsonBody.toJsonString();
@@ -170,6 +177,77 @@ public abstract class RestAPIService implements ResponseHandler<JSONObject> {
 					Log.e(Constants.LOG_TAG, "bad request body", e);
 				}
 			}
+		}
+	}
+
+	@Override
+	public JSONObject handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+
+		int status = response.getStatusLine().getStatusCode();
+
+		JSONObject responseContent = null;
+		try {
+			HttpEntity responseEntity = response.getEntity();
+
+			if (responseEntity != null) {
+				String content = EntityUtils.toString(response.getEntity(), "UTF-8");
+				responseContent = new JSONObject(content);
+			}
+
+			switch (status) {
+				case HttpStatus.SC_OK:
+					// save cookies in CookieManager
+					StringBuffer cookies = new StringBuffer();
+					for (Header h : response.getHeaders("Set-Cookie")) {
+						Log.d(Constants.LOG_TAG, h.toString());
+						cookies.append(h.getValue()).append(";");
+					}
+					if (cookies.length() > 0) {
+						String uri = getRequest().getRequestLine().getUri();
+						CookieManager.getInstance().setCookie(uri, cookies.toString());
+						CookieSyncManager.getInstance().sync();
+					}
+
+					onSuccess(responseContent);
+					break;
+
+				default:
+					onFailed(status, responseContent);
+					break;
+			}
+
+		} catch (Exception e) {
+			Log.d(Constants.LOG_TAG, "bad json response[" + status + "]", e);
+			onException(e);
+		}
+
+		return responseContent;
+	}
+
+	public void onSuccess(JSONObject body) {
+		// TODO common onSuccess handle
+		Log.d(Constants.LOG_TAG, "request succuess");
+
+		// customize onSuccess handle
+		if (builder != null) {
+			builder.onSuccess(body);
+		}
+	}
+
+	public void onFailed(int status, JSONObject body) {
+		// TODO common onError handle
+		Log.w(Constants.LOG_TAG, "request failed:(" + status);
+
+		// customize onError handle
+		if (builder != null) {
+			builder.onFailed(status, body);
+		}
+	}
+
+	public void onException(Exception e) {
+		Log.e(Constants.LOG_TAG, "request failed:(", e);
+		if (builder != null) {
+			builder.onExcpetion(e);
 		}
 	}
 }

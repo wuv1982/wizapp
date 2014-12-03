@@ -7,11 +7,15 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.json.JSONObject;
 
-import android.os.AsyncTask;
+import android.app.Activity;
 import android.util.Log;
 
 import com.wb.wizapp.Constants;
+import com.wb.wizapp.concurret.UIAsyncTask;
+import com.wb.wizapp.concurret.UISyncTask;
+import com.wb.wizapp.ui.BaseActivity;
 
 public class RestAPIHost {
 	private final HttpHost host;
@@ -42,23 +46,51 @@ public class RestAPIHost {
 		return host.toURI() + service.getRequest().getRequestLine().getUri();
 	}
 
-	public void asyncCall(final RestAPIService service) {
-		new AsyncTask<Void, Void, Void>() {
+	public void asyncCall(Activity act, final RestAPIService service) {
+		new UIAsyncTask<Void, Void, JSONObject>(act) {
 			@Override
-			protected Void doInBackground(Void... params) {
-				RestAPIHost.this.call(service);
-				return null;
+			protected JSONObject doInBackground(Void... params) {
+				return RestAPIHost.this.call(service);
 			}
+
+			protected void onPostExecute(JSONObject result) {
+				Activity act = wkAct.get();
+				if (act != null && service.builder != null) {
+					service.builder.onPostResult(act, result);
+				}
+			};
 		}.execute();
 	}
 
-	public void call(final RestAPIService service) {
+	public void uiSyncCall(BaseActivity act, final RestAPIService service) {
+		new UISyncTask<Void, Void, JSONObject>(act) {
+			@Override
+			protected JSONObject doInBackground(Void... params) {
+				return RestAPIHost.this.call(service);
+			}
+
+			protected void onPostExecute(JSONObject result) {
+				super.onPostExecute(result);
+
+				BaseActivity act = wkAct.get();
+				if (act != null && service.builder != null) {
+					service.builder.onPostResult(act, result);
+				}
+			};
+		}.execute();
+	}
+
+	public JSONObject call(final RestAPIService service) {
+		JSONObject rs = null;
 		try {
-			httpClient.execute(host, service.getRequest(), service);
+			rs = httpClient.execute(host, service.getRequest(), service);
 			Log.d(Constants.LOG_TAG, "http request sent");
 		} catch (Exception e) {
 			Log.e(Constants.LOG_TAG, "http request failed", e);
-			service.builder.onFailed(IRestAPIServiceBuilder.STATUS_CODE_EXCEPTION, null);
+			if (service.builder != null) {
+				service.builder.onExcpetion(e);
+			}
 		}
+		return rs;
 	}
 }

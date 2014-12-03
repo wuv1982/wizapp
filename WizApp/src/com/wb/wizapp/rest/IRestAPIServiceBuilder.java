@@ -3,16 +3,20 @@ package com.wb.wizapp.rest;
 import org.apache.http.Header;
 import org.json.JSONObject;
 
+import android.app.Activity;
+
 public interface IRestAPIServiceBuilder<T extends JsonParsable> {
 
-	public static final int STATUS_CODE_EXCEPTION = -1;
+	public T getBody();
 
-	public T appendBody();
-
-	public Header[] appendHeaders();
+	public Header[] getHeaders();
 
 	public void onSuccess(JSONObject body);
 
-	public void onFailed(int statusCode, String body);
+	public void onFailed(int statusCode, JSONObject body);
+
+	public void onExcpetion(Exception e);
+
+	public void onPostResult(Activity act, JSONObject result);
 
 }
