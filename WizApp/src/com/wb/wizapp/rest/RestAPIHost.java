@@ -18,8 +18,8 @@ import com.wb.wizapp.concurret.UISyncTask;
 import com.wb.wizapp.ui.BaseActivity;
 
 public class RestAPIHost {
-	private final HttpHost host;
-	private final HttpClient httpClient;
+	protected final HttpHost host;
+	protected final HttpClient httpClient;
 
 	public RestAPIHost(final HttpHost host) {
 		this(host, null);
@@ -53,6 +53,7 @@ public class RestAPIHost {
 				return RestAPIHost.this.call(service);
 			}
 
+			@Override
 			protected void onPostExecute(JSONObject result) {
 				Activity act = wkAct.get();
 				if (act != null && service.builder != null) {
@@ -69,6 +70,7 @@ public class RestAPIHost {
 				return RestAPIHost.this.call(service);
 			}
 
+			@Override
 			protected void onPostExecute(JSONObject result) {
 				super.onPostExecute(result);
 
