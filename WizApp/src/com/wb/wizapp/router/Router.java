@@ -76,7 +76,7 @@ public class Router {
 		// context.startActivity(intent);
 	}
 
-	private Bundle getBundle(Uri uri) {
+	public static Bundle getBundle(Uri uri) {
 		Bundle bundle = new Bundle();
 		if (!uri.getQuery().equals("")) {
 			for (Iterator<String> it = uri.getQueryParameterNames().iterator(); it.hasNext();) {

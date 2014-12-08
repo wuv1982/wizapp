@@ -14,15 +14,17 @@ import android.view.ViewGroup;
 
 import com.wb.wizapp.R;
 
-public class MainActivity extends BaseActivity implements MainDrawerFragment.NavigationDrawerCallbacks {
+public class MainActivity extends RouterWebViewActivity implements MainDrawerFragment.NavigationDrawerCallbacks {
 
 	/**
-	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
+	 * Fragment managing the behaviors, interactions and presentation of the
+	 * navigation drawer.
 	 */
 	private MainDrawerFragment mNavigationDrawerFragment;
 
 	/**
-	 * Used to store the last screen title. For use in {@link #restoreActionBar()}.
+	 * Used to store the last screen title. For use in
+	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
 
@@ -36,7 +38,8 @@ public class MainActivity extends BaseActivity implements MainDrawerFragment.Nav
 
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
-		// mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) getRootView());
+		// mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
+		// (DrawerLayout) getRootView());
 	}
 
 	@Override
@@ -100,7 +103,8 @@ public class MainActivity extends BaseActivity implements MainDrawerFragment.Nav
 	 */
 	public static class PlaceholderFragment extends Fragment {
 		/**
-		 * The fragment argument representing the section number for this fragment.
+		 * The fragment argument representing the section number for this
+		 * fragment.
 		 */
 		private static final String ARG_SECTION_NUMBER = "section_number";
 
