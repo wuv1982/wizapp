@@ -27,8 +27,12 @@ public class RouterWebViewActivity extends BaseActivity {
 		CookieSyncManager.getInstance().stopSync();
 	}
 
-	public void refresh(String url) {
+	public void load(String url) {
 		webview.loadUrl(url);
+	}
+
+	public void refresh() {
+		webview.reload();
 	}
 
 }

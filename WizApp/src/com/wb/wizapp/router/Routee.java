@@ -2,6 +2,7 @@ package com.wb.wizapp.router;
 
 import java.util.Locale;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -36,14 +37,6 @@ public enum Routee implements RouteeCallback {
 			context.startActivity(intent);
 		}
 	},
-	ROUTEE_REFRESH {
-		@Override
-		public void run(Context context, Uri uri) {
-			RouterWebViewActivity activity = (RouterWebViewActivity) context;
-			String url = uri.getQueryParameter("url");
-			activity.refresh(url);
-		}
-	},
 	ROUTEE_MAIN {
 		@Override
 		public void run(Context context, Uri uri) {
@@ -60,6 +53,35 @@ public enum Routee implements RouteeCallback {
 			intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			intent.putExtras(Router.getBundle(uri));
 			context.startActivity(intent);
+		}
+	},
+	ROUTEE_LOAD {
+		@Override
+		public void run(Context context, Uri uri) {
+			RouterWebViewActivity activity = (RouterWebViewActivity) context;
+			String url = uri.getQueryParameter("url");
+			activity.load(url);
+		}
+	},
+	ROUTEE_REFRESH {
+		@Override
+		public void run(Context context, Uri uri) {
+			RouterWebViewActivity activity = (RouterWebViewActivity) context;
+			activity.refresh();
+		}
+	},
+	ROUTEE_CLOSE {
+		@Override
+		public void run(Context context, Uri uri) {
+			Activity activity = (Activity) context;
+			activity.finish();
+		}
+	},
+	ROUTEE_TRIGGER {
+		@Override
+		public void run(Context context, Uri uri) {
+			String event = uri.getQueryParameter("event");
+			Router.getRouter().triggerEvent(event, uri);
 		}
 	};
 

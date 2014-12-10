@@ -2,7 +2,6 @@ package com.wb.wizapp.router;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 
 public class Router {
 
-	private static final String SCHEME_ROUTER = "router";
 	private static Router underlying;
 
 	private final Context context;
@@ -22,13 +20,13 @@ public class Router {
 		routerMap = new HashMap<String, RouteeCallback>();
 	}
 
-	public static void load(Context context, List<Routee> routees) {
-		underlying = new Router(context);
-
-		for (Routee r : routees) {
-
-		}
-	}
+	// public static void load(Context context, List<Routee> routees) {
+	// underlying = new Router(context);
+	//
+	// for (Routee r : routees) {
+	//
+	// }
+	// }
 
 	public static Router getRouter() {
 		if (underlying == null) {
@@ -37,43 +35,22 @@ public class Router {
 		return underlying;
 	}
 
-	public void map(String uriString, RouteeCallback callback) {
+	public void map(String uriString) {
 
-		routerMap.put(uriString, callback);
+		Uri uri = Uri.parse(uriString);
+		String scheme = uri.getScheme();
 
-		// Uri uri = Uri.parse(uriString);
-		// Intent intent = new Intent();
-		//
-		// String scheme = uri.getScheme();
-		// if (scheme.equalsIgnoreCase("http")) {
-		// // external browser
-		// } else if (scheme.equals(SCHEME_ROUTER)) {
-		// String host = uri.getHost();
-		// intent.putExtras(getBundle(uri));
-		//
-		// if (host.equals("list")) {
-		// String action = uri.getQueryParameter("action");
-		// if (action.equals("refresh")) {
-		//
-		// } else if (action.equals("next")) {
-		//
-		// }
-		// } else if (host.equals("item")) {
-		// String action = uri.getQueryParameter("action");
-		//
-		// if (action.equals("add")) {
-		//
-		// } else if (action.equals("delete")) {
-		//
-		// } else if (action.equals("get")) {
-		//
-		// } else if (action.equals("update")) {
-		//
-		// }
-		// }
-		// }
-		//
-		// context.startActivity(intent);
+		Routee.valueOf(scheme).run(context, uri);
+	}
+
+	public void putEvent(String event, RouteeCallback callback) {
+		if (!routerMap.containsKey(event)) {
+			routerMap.put(event, callback);
+		}
+	}
+
+	public void triggerEvent(String event, Uri uri) {
+		routerMap.get(event).run(context, uri);
 	}
 
 	public static Bundle getBundle(Uri uri) {
