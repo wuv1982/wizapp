@@ -2,6 +2,7 @@ package com.wb.wizapp.router;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import android.content.Context;
@@ -40,7 +41,7 @@ public class Router {
 		Uri uri = Uri.parse(uriString);
 		String scheme = uri.getScheme();
 
-		Routee.valueOf(scheme).run(context, uri);
+		Routee.valueOf(scheme.toUpperCase(Locale.US)).run(context, uri);
 	}
 
 	public void putEvent(String event, RouteeCallback callback) {
