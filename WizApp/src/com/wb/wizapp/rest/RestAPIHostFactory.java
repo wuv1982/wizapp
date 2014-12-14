@@ -11,14 +11,15 @@ public class RestAPIHostFactory {
 
 	private static Map<String, RestAPIHost> hostCache = new HashMap<String, RestAPIHost>();
 
-	public synchronized static RestAPIHost getHost(String uri) {
-		RestAPIHost host = hostCache.get(uri);
+	public synchronized static RestAPIHost getHost(String url) {
+		Uri uri = Uri.parse(url);
+		String host = uri.getHost();
+		RestAPIHost apiHost = hostCache.get(host);
 
-		if (host == null) {
-			Uri u = Uri.parse(uri);
-			host = new RestAPIHost(new HttpHost(u.getHost(), u.getPort(), u.getScheme()));
-			hostCache.put(uri, host);
+		if (apiHost == null) {
+			apiHost = new RestAPIHost(new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme()));
+			hostCache.put(host, apiHost);
 		}
-		return host;
+		return apiHost;
 	}
 }

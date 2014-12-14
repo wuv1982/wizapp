@@ -30,7 +30,7 @@ import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
-import com.wb.wizapp.Constants;
+import com.wb.wizapp.IConstants;
 
 public class RestAPIService implements ResponseHandler<JSONObject> {
 
@@ -57,7 +57,7 @@ public class RestAPIService implements ResponseHandler<JSONObject> {
 	}
 
 	protected final Context context;
-	protected final IRestAPIServiceBuilder<? extends JsonParsable> builder;
+	protected final IRestAPIServiceBuilder<? extends IJsonParsable> builder;
 	private RestMethod method;
 	private String path;
 
@@ -70,7 +70,7 @@ public class RestAPIService implements ResponseHandler<JSONObject> {
 	 * @param builder
 	 */
 	public RestAPIService(Context context, String url, RestMethod method,
-			IRestAPIServiceBuilder<? extends JsonParsable> builder) {
+			IRestAPIServiceBuilder<? extends IJsonParsable> builder) {
 		this.context = context;
 		this.builder = builder;
 		this.path = url;
@@ -84,7 +84,7 @@ public class RestAPIService implements ResponseHandler<JSONObject> {
 	 * @param params
 	 *            for String format to path
 	 */
-	public RestAPIService(Context context, IRestAPIServiceBuilder<? extends JsonParsable> builder, Object... params) {
+	public RestAPIService(Context context, IRestAPIServiceBuilder<? extends IJsonParsable> builder, Object... params) {
 		this.context = context;
 		this.builder = builder;
 
@@ -93,7 +93,7 @@ public class RestAPIService implements ResponseHandler<JSONObject> {
 		if (annotations != null) {
 			for (Annotation ann : annotations) {
 				Class<?> annType = ann.annotationType();
-				Log.d(Constants.LOG_TAG, ann.toString());
+				Log.d(IConstants.LOG_TAG, ann.toString());
 				if (annType == Path.class) {
 					if (params != null) {
 						this.path = String.format(((Path) ann).value(), params);
@@ -160,13 +160,13 @@ public class RestAPIService implements ResponseHandler<JSONObject> {
 			}
 		}
 
-		Log.d(Constants.LOG_TAG, request.getRequestLine().toString());
+		Log.d(IConstants.LOG_TAG, request.getRequestLine().toString());
 		return request;
 	}
 
 	private void setBody(HttpEntityEnclosingRequest request) {
 		if (builder != null) {
-			JsonParsable jsonBody = builder.getBody();
+			IJsonParsable jsonBody = builder.getBody();
 			if (jsonBody != null) {
 				try {
 					String jsonStr = jsonBody.toJsonString();
@@ -174,7 +174,7 @@ public class RestAPIService implements ResponseHandler<JSONObject> {
 						request.setEntity(new StringEntity(jsonStr, "UTF-8"));
 					}
 				} catch (UnsupportedEncodingException e) {
-					Log.e(Constants.LOG_TAG, "bad request body", e);
+					Log.e(IConstants.LOG_TAG, "bad request body", e);
 				}
 			}
 		}
@@ -199,7 +199,7 @@ public class RestAPIService implements ResponseHandler<JSONObject> {
 					// save cookies in CookieManager
 					StringBuffer cookies = new StringBuffer();
 					for (Header h : response.getHeaders("Set-Cookie")) {
-						Log.d(Constants.LOG_TAG, h.toString());
+						Log.d(IConstants.LOG_TAG, h.toString());
 						cookies.append(h.getValue()).append(";");
 					}
 					if (cookies.length() > 0) {
@@ -217,7 +217,7 @@ public class RestAPIService implements ResponseHandler<JSONObject> {
 			}
 
 		} catch (Exception e) {
-			Log.d(Constants.LOG_TAG, "bad json response[" + status + "]", e);
+			Log.d(IConstants.LOG_TAG, "bad json response[" + status + "]", e);
 			onException(e);
 		}
 
@@ -226,7 +226,7 @@ public class RestAPIService implements ResponseHandler<JSONObject> {
 
 	public void onSuccess(JSONObject body) {
 		// TODO common onSuccess handle
-		Log.d(Constants.LOG_TAG, "request succuess");
+		Log.d(IConstants.LOG_TAG, "request succuess");
 
 		// customize onSuccess handle
 		if (builder != null) {
@@ -236,7 +236,7 @@ public class RestAPIService implements ResponseHandler<JSONObject> {
 
 	public void onFailed(int status, JSONObject body) {
 		// TODO common onError handle
-		Log.w(Constants.LOG_TAG, "request failed:(" + status);
+		Log.w(IConstants.LOG_TAG, "request failed:(" + status);
 
 		// customize onError handle
 		if (builder != null) {
@@ -245,7 +245,7 @@ public class RestAPIService implements ResponseHandler<JSONObject> {
 	}
 
 	public void onException(Exception e) {
-		Log.e(Constants.LOG_TAG, "request failed:(", e);
+		Log.e(IConstants.LOG_TAG, "request failed:(", e);
 		if (builder != null) {
 			builder.onExcpetion(e);
 		}

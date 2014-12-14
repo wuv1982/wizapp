@@ -9,10 +9,10 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 
-import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
-import com.wb.wizapp.Constants;
+import com.wb.wizapp.IConstants;
 import com.wb.wizapp.concurret.UIAsyncTask;
 import com.wb.wizapp.concurret.UISyncTask;
 import com.wb.wizapp.ui.BaseActivity;
@@ -46,8 +46,8 @@ public class RestAPIHost {
 		return host.toURI() + service.getRequest().getRequestLine().getUri();
 	}
 
-	public void asyncCall(Activity act, final RestAPIService service) {
-		new UIAsyncTask<Void, Void, JSONObject>(act) {
+	public void asyncCall(Context ctx, final RestAPIService service) {
+		new UIAsyncTask<Void, Void, JSONObject>(ctx) {
 			@Override
 			protected JSONObject doInBackground(Void... params) {
 				return RestAPIHost.this.call(service);
@@ -55,9 +55,9 @@ public class RestAPIHost {
 
 			@Override
 			protected void onPostExecute(JSONObject result) {
-				Activity act = wkAct.get();
-				if (act != null && service.builder != null) {
-					service.builder.onPostResult(act, result);
+				Context ctx = wkCtx.get();
+				if (ctx != null && service.builder != null) {
+					service.builder.onPostResult(ctx, result);
 				}
 			};
 		}.execute();
@@ -82,13 +82,13 @@ public class RestAPIHost {
 		}.execute();
 	}
 
-	public JSONObject call(final RestAPIService service) {
+	private JSONObject call(final RestAPIService service) {
 		JSONObject rs = null;
 		try {
 			rs = httpClient.execute(host, service.getRequest(), service);
-			Log.d(Constants.LOG_TAG, "http request sent");
+			Log.d(IConstants.LOG_TAG, "http request sent");
 		} catch (Exception e) {
-			Log.e(Constants.LOG_TAG, "http request failed", e);
+			Log.e(IConstants.LOG_TAG, "http request failed", e);
 			if (service.builder != null) {
 				service.builder.onExcpetion(e);
 			}

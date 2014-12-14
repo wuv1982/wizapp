@@ -3,9 +3,9 @@ package com.wb.wizapp.rest;
 import org.apache.http.Header;
 import org.json.JSONObject;
 
-import android.app.Activity;
+import android.content.Context;
 
-public class RestAPISercieBuilderAdapter<T extends JsonParsable> implements IRestAPIServiceBuilder<T> {
+public class RestAPISercieBuilderAdapter<T extends IJsonParsable> implements IRestAPIServiceBuilder<T> {
 
 	@Override
 	public T getBody() {
@@ -33,7 +33,7 @@ public class RestAPISercieBuilderAdapter<T extends JsonParsable> implements IRes
 	}
 
 	@Override
-	public void onPostResult(Activity act, JSONObject result) {
+	public void onPostResult(Context act, JSONObject result) {
 
 	}
 

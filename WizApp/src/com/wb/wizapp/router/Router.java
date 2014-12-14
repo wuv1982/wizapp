@@ -14,20 +14,12 @@ public class Router {
 	private static Router underlying;
 
 	private final Context context;
-	private final Map<String, RouteeCallback> routerMap;
+	private Map<String, RouteeCallback> eventMap;
 
 	private Router(Context context) {
 		this.context = context;
-		routerMap = new HashMap<String, RouteeCallback>();
+		this.eventMap = new HashMap<String, RouteeCallback>();
 	}
-
-	// public static void load(Context context, List<Routee> routees) {
-	// underlying = new Router(context);
-	//
-	// for (Routee r : routees) {
-	//
-	// }
-	// }
 
 	public static Router getRouter() {
 		if (underlying == null) {
@@ -41,17 +33,25 @@ public class Router {
 		Uri uri = Uri.parse(uriString);
 		String scheme = uri.getScheme();
 
-		Routee.valueOf(scheme.toUpperCase(Locale.US)).run(context, uri);
-	}
-
-	public void putEvent(String event, RouteeCallback callback) {
-		if (!routerMap.containsKey(event)) {
-			routerMap.put(event, callback);
+		Routee r = Routee.valueOf(scheme.toUpperCase(Locale.US));
+		if (r != null) {
+			r.run(context, uri);
 		}
 	}
 
-	public void triggerEvent(String event, Uri uri) {
-		routerMap.get(event).run(context, uri);
+	public void registerEvent(String uriString, RouteeCallback callback) {
+		Uri uri = Uri.parse(uriString);
+		String event = uri.getHost();
+		if (!eventMap.containsKey(event)) {
+			eventMap.put(event, callback);
+		}
+	}
+
+	protected void triggerEvent(Uri uri) {
+		String event = uri.getHost();
+		if (eventMap.containsKey(event)) {
+			eventMap.get(event).run(context, uri);
+		}
 	}
 
 	public static Bundle getBundle(Uri uri) {

@@ -5,7 +5,7 @@ import android.app.DialogFragment;
 import android.os.Handler;
 import android.util.Log;
 
-import com.wb.wizapp.Constants;
+import com.wb.wizapp.IConstants;
 
 public class BaseActivity extends Activity {
 
@@ -13,7 +13,7 @@ public class BaseActivity extends Activity {
 	private final int PROGRESS_TIMEOUT = 2 * 1000;
 
 	public void ShowProgress() {
-		Log.d(Constants.LOG_TAG, "ShowProgress");
+		Log.d(IConstants.LOG_TAG, "ShowProgress");
 
 		if (frg == null) {
 			frg = new BaseProgressFragment();
@@ -33,7 +33,7 @@ public class BaseActivity extends Activity {
 
 	public void HideProgress() {
 		if (frg != null && frg.isVisible()) {
-			Log.d(Constants.LOG_TAG, "HideProgress");
+			Log.d(IConstants.LOG_TAG, "HideProgress");
 			frg.dismiss();
 		}
 	}

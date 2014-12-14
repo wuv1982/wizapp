@@ -3,6 +3,7 @@ package com.wb.wizapp.ui.zxing;
 import android.app.Activity;
 
 public final class ScanActivity extends Activity {
+	// TODO dummy source
 }
 
 // import android.graphics.Bitmap;
@@ -18,7 +19,8 @@ public final class ScanActivity extends Activity {
 // public final class ScanActivity extends CaptureActivity {
 //
 // @Override
-// public void handleDecode(Result rawResult, Bitmap barcode, float scaleFactor) {
+// public void handleDecode(Result rawResult, Bitmap barcode, float scaleFactor)
+// {
 // // get result
 // String format = rawResult.getBarcodeFormat().toString();
 // Log.d(Constants.LOG_TAG, "format =" + format);
@@ -49,7 +51,8 @@ public final class ScanActivity extends Activity {
 //
 // private boolean isUrl(String text) {
 // return text != null
-// && (text.startsWith("HTTP://") || text.startsWith("http://") || text.startsWith("HTTPS://") || text
+// && (text.startsWith("HTTP://") || text.startsWith("http://") ||
+// text.startsWith("HTTPS://") || text
 // .startsWith("https://"));
 // }
 // }
